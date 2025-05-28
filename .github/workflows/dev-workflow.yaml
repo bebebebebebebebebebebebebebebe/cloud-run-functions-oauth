@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          install: true
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+            ${{ runner.os }}-docker-${{ github.ref }}
+            ${{ runner.os }}-docker-main
+
+      - name: Build Docker Image
+        run: |
+          docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache \
+          --cache-to=type=local,dest=/tmp/.buildx-cache \
+          --load \
+          -t oauth-server-app:latest .
+
+      - name: Run Docker Container
+        run: |
+          docker run -d --name oauth-server-app-container \
+          -p 8000:8000 \
+          oauth-server-app:latest
+
+      - name: Verify Docker Image
+        run: docker ps
+
+      - name: Wait for Web Server to Start
+        run: |
+          for i in {1..30}; do
+              curl -s http://localhost:8000 > /dev/null && echo "Server is up!" && exit 0
+              echo "Waiting..."
+              sleep 1
+            done
+            echo "Server did not start in time." && exit 1
+
+      - name: Verify Web Server
+        run: uv run pytest -s
+
+      - name: Stop and Remove Container
+        run: |
+          docker stop dev-app-container
+          docker rm dev-app-container

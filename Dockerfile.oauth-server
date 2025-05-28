@@ -1,9 +1,9 @@
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS requirements-stage
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
 WORKDIR /tmp
 
 RUN apt-get update && \
-  apt-get -y install locales vim git libpq5 make && \
+  apt-get -y install locales vim git libpq5 make curl && \
   localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 

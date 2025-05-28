@@ -1,0 +1,32 @@
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.2.0
+      hooks:
+          - id: trailing-whitespace
+            always_run: true
+
+          - id: end-of-file-fixer
+            always_run: true
+
+          - id: check-yaml
+            always_run: true
+
+          - id: check-added-large-files
+            always_run: true
+
+          - id: check-merge-conflict
+            always_run: true
+
+    - repo: https://github.com/Yelp/detect-secrets
+      rev: v1.4.0
+      hooks:
+        - id: detect-secrets
+
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.8.5
+      hooks:
+          - id: ruff
+            always_run: true
+            args: [--fix, --config=pyproject.toml]
+
+          - id: ruff-format

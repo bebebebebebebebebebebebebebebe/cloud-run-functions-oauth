@@ -1,0 +1,33 @@
+services:
+  web:
+    tty: true
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.oauth-server
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    networks:
+      - app_network
+
+    # deploy:
+    #   replicas: 3
+
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /tmp
+          ignore:
+            - .venv/
+
+        - action: rebuild
+          path: ./pyproject.toml
+
+networks:
+  app_network:
+    driver: bridge

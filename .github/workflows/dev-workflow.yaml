@@ -33,6 +33,10 @@ jobs:
             ${{ runner.os }}-docker-${{ github.ref }}
             ${{ runner.os }}-docker-main
 
+      - name: Copy test environment file
+        run: |
+          cp .env.test .env
+
       - name: Build Docker Image
         run: |
           docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache \

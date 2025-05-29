@@ -67,3 +67,6 @@ ignore = [
 quote-style = "single"
 indent-style = "space"
 docstring-code-format = true
+
+[tool.ruff.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.params.Query"]

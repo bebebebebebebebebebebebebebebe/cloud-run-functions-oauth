@@ -1,10 +1,22 @@
 import click
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.routers import auth
 
 app = FastAPI(title='Cloud Run Functions Example', version='1.0.0')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],  # 本番環境では特定のオリジンのみ許可するように変更する
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
+
+app.include_router(auth.router)
 
 
 @app.get('/')

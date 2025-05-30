@@ -11,7 +11,28 @@ on:
       - dev
 
 jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: uv pip install .[dev]
+
+      - name: Run ruff linter
+        run: uv run ruff check .
+
+      - name: Run ruff formatter
+        run: uv run ruff format --check .
+
   build:
+    needs: lint-and-format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

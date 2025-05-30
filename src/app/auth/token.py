@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from jose import JWTError, jwt
 
 from app.auth.models import TokenData
-from app.config import settings, Settings
+from app.config import Settings, settings
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None, current_settings: Optional[Settings] = None) -> str:
@@ -76,7 +76,7 @@ def decode_token(token: str, current_settings: Optional[Settings] = None) -> Tok
             token,
             effective_settings.JWT_SECRET_KEY,
             algorithms=[effective_settings.SIGNATURE_ALGORITHM],
-            options={"verify_exp": False},
+            options={'verify_exp': False},
         )
         token_data = TokenData(sub=payload.get('sub'), email=payload.get('email'), exp=payload.get('exp'))
         return token_data
